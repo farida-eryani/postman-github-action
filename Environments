@@ -1,0 +1,8 @@
+scheme: https
+domain: telesantebretagne.org
+auth: aut-test
+service: mes-services-test
+clinet_id: admin_cli
+client_secret: secret
+username: secret
+password: secret

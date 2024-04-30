@@ -1,0 +1,39 @@
+GET {{scheme}}://{{auth}}.{{domain}}/admin/realms/{{realm}}/group-by-path/{{path}}
+
+Authorization:
+Bearer Token: {{bearer}}
+
+Pre-request script:
+groups_path = pm.collectionVariables.get("groups_path");
+pm.collectionVariables.set("path", groups_path.shift());
+pm.collectionVariables.set("groups_path", groups_path);
+
+Tests:
+pm.test("Status code is 200", function () {
+    pm.response.to.have.status(200);
+});
+
+pm.test("Response content type is application/json", function () {
+  pm.expect(pm.response.headers.get('Content-Type')).to.include('application/json');
+});
+
+// Add a test to check for the response schema
+pm.test("Response schema is valid", function () {
+  const responseData = pm.response.json();
+  
+  // Check for the required fields in the response schema
+  pm.expect(responseData).to.be.an('object');
+  pm.expect(responseData).to.have.property('id');
+  pm.expect(responseData).to.have.property('name');
+  pm.expect(responseData).to.have.property('path');
+  pm.expect(responseData).to.have.property('subGroups');
+  pm.expect(responseData).to.have.property('attributes');
+  pm.expect(responseData).to.have.property('realmRoles');
+  pm.expect(responseData).to.have.property('clientRoles');
+});
+
+
+if (groups_path.length > 0) {
+  postman.setNextRequest("2. Get group details from keycloak");
+}
+

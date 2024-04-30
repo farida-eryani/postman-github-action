@@ -1,0 +1,12 @@
+POST {{scheme}}://{{auth}}.{{domain}}/realms/master/protocol/openid-connect/token
+
+Authorization:
+Bearer Token: {{bearer}}
+
+Body:
+grant_type: password
+username: {{username}}
+password: {{password}}
+
+Test:
+pm.collectionVariables.set("bearer", pm.response.json().access_token);

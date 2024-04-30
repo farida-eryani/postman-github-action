@@ -1,0 +1,22 @@
+GET {{scheme}}://{{auth}}.{{domain}}/admin/realms/{{realm}}/groups
+
+Authorization:
+Bearer Token: {{bearer}}
+
+Tests:
+pm.test("Status code is 200", function () {
+    pm.response.to.have.status(200);
+});
+
+pm.test("Ensure the access object contains expected properties", function () {
+    const responseData = pm.response.json();
+    
+    pm.expect(responseData).to.be.an('array');
+    responseData.forEach(function(group) {
+        pm.expect(group.access).to.be.an('object');
+        pm.expect(group.access).to.include.all.keys('view', 'viewMembers', 'manageMembers', 'manage', 'manageMembership');
+    });
+});
+
+// Définir le chemin de tous les groupes dans une variable globale d'environnement
+pm.collectionVariables.set("groups_path", pm.response.json().map(group => group.path));
